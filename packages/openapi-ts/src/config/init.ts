@@ -40,6 +40,7 @@ export async function resolveJobs({
 
     const loaded = await loadConfigFile<UserConfig>({
       configFile,
+      cwd: userConfig.cwd,
       logger,
       name: 'openapi-ts',
       userConfig,
@@ -47,7 +48,10 @@ export async function resolveJobs({
 
     if (!Object.keys(dependencies).length) {
       // TODO: handle dependencies for multiple configs properly?
-      dependencies = getProjectDependencies(loaded.foundConfig ? loaded.configFile : undefined);
+      dependencies = getProjectDependencies(
+        loaded.foundConfig ? loaded.configFile : undefined,
+        userConfig.cwd,
+      );
     }
 
     configs.push(...loaded.configs);

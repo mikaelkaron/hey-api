@@ -9,9 +9,16 @@ import type { PluginHandler } from './types';
 import { getClientBaseUrlKey } from './utils';
 
 export function resolveRuntimeConfigPath({
+  cwd = process.cwd(),
   outputPath,
   runtimeConfigPath,
 }: {
+  /**
+   * Directory to resolve a relative `runtimeConfigPath` against.
+   *
+   * @default process.cwd()
+   */
+  cwd?: string;
   outputPath: string;
   runtimeConfigPath: string;
 }): string {
@@ -24,7 +31,7 @@ export function resolveRuntimeConfigPath({
 
   const absoluteInputPath = isAbsolutePath
     ? runtimeConfigPath
-    : path.resolve(process.cwd(), runtimeConfigPath);
+    : path.resolve(cwd, runtimeConfigPath);
   const relative = path.relative(outputPath, absoluteInputPath).split(path.sep).join('/');
   return relative.startsWith('.') ? relative : `./${relative}`;
 }
@@ -48,6 +55,7 @@ export const createClient: PluginHandler = ({ plugin }) => {
   const symbolCreateClientConfig = runtimeConfigPath
     ? plugin.symbol('createClientConfig', {
         external: resolveRuntimeConfigPath({
+          cwd: getTypedConfig(plugin).cwd,
           outputPath: getTypedConfig(plugin).output.path,
           runtimeConfigPath,
         }),

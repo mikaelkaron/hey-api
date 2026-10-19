@@ -89,6 +89,18 @@ createClient({
 });
 ```
 
+Relative paths, the configuration file lookup, and the `package.json` used to detect installed packages resolve against `process.cwd()`. To generate output for a project in another folder, set `cwd`.
+
+```ts title="script.ts"
+import { createClient } from '@hey-api/openapi-ts';
+
+createClient({
+  cwd: 'apps/web',
+  input: './openapi.json', // apps/web/openapi.json
+  output: 'src/client', // apps/web/src/client
+});
+```
+
 ### Vite
 
 If you're using [Vite](https://vite.dev) 5, 6, 7, or 8, you can integrate `@hey-api/openapi-ts` directly into your build pipeline with `@hey-api/vite-plugin`. Install it alongside the main package:

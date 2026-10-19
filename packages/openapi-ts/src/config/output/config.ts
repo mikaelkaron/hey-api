@@ -130,7 +130,10 @@ export const outputConfig = defineConfig<UserOutput, Output>({
   source: sourceConfig,
 });
 
-export function getOutput(input: { output: MaybeArray<string | UserOutput> }): Output {
+export function getOutput(input: {
+  cwd?: string;
+  output: MaybeArray<string | UserOutput>;
+}): Output {
   if (Array.isArray(input.output)) {
     throw new Error(
       'Unexpected array of outputs in user configuration. This should have been expanded already.',
@@ -139,6 +142,10 @@ export function getOutput(input: { output: MaybeArray<string | UserOutput> }): O
 
   const output = input.output as string | UserOutput;
   const userOutput = typeof output === 'string' ? { path: output } : output;
+
+  if (input.cwd !== undefined && typeof userOutput?.path === 'string') {
+    return outputConfig({ ...userOutput, path: path.resolve(input.cwd, userOutput.path) });
+  }
 
   return outputConfig(userOutput);
 }

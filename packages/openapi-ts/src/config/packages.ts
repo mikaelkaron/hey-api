@@ -3,14 +3,18 @@ import path from 'node:path';
 
 /**
  * Finds and reads the project's package.json file by searching upwards from the config file location,
- * or from process.cwd() if no config file is provided.
+ * or from `cwd` if no config file is provided.
  * This ensures we get the correct dependencies even in monorepo setups.
  *
  * @param configFilePath - The path to the configuration file (e.g., openapi-ts.config.ts)
+ * @param cwd - The directory to search from when no configuration file is provided, defaults to process.cwd()
  * @returns An object containing all project dependencies (dependencies, devDependencies, peerDependencies, optionalDependencies)
  */
-export function getProjectDependencies(configFilePath?: string): Record<string, string> {
-  let currentDir = configFilePath ? path.dirname(configFilePath) : process.cwd();
+export function getProjectDependencies(
+  configFilePath?: string,
+  cwd?: string,
+): Record<string, string> {
+  let currentDir = configFilePath ? path.dirname(configFilePath) : path.resolve(cwd ?? '.');
 
   while (currentDir !== path.dirname(currentDir)) {
     const packageJsonPath = path.join(currentDir, 'package.json');

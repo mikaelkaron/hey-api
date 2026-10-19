@@ -179,4 +179,32 @@ describe('getOutput', () => {
       expect(output.module.extension).toBeUndefined();
     });
   });
+
+  describe('path', () => {
+    it('resolves a relative path against process.cwd() by default', () => {
+      const output = getOutput({
+        output: 'src/client',
+      });
+
+      expect(output.path).toBe(path.resolve(process.cwd(), 'src/client'));
+    });
+
+    it('resolves a relative path against cwd', () => {
+      const output = getOutput({
+        cwd: tmpDir,
+        output: { path: 'src/client' },
+      });
+
+      expect(output.path).toBe(path.join(tmpDir, 'src/client'));
+    });
+
+    it('keeps an absolute path when cwd is set', () => {
+      const output = getOutput({
+        cwd: tmpDir,
+        output: path.join(os.tmpdir(), 'client'),
+      });
+
+      expect(output.path).toBe(path.join(os.tmpdir(), 'client'));
+    });
+  });
 });

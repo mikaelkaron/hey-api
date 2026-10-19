@@ -62,4 +62,25 @@ describe('resolveRuntimeConfigPath', () => {
       }),
     ).toBe('./hey-api.ts');
   });
+
+  it('resolves relative filesystem paths from the given cwd', () => {
+    const cwd = path.join(process.cwd(), 'apps/web');
+    const outputPath = path.join(cwd, 'src/client');
+
+    expect(
+      resolveRuntimeConfigPath({
+        cwd,
+        outputPath,
+        runtimeConfigPath: './src/hey-api.ts',
+      }),
+    ).toBe('../hey-api.ts');
+
+    expect(
+      resolveRuntimeConfigPath({
+        cwd,
+        outputPath: path.join(process.cwd(), 'src/client'),
+        runtimeConfigPath: './src/hey-api.ts',
+      }),
+    ).toBe('../../apps/web/src/hey-api.ts');
+  });
 });
