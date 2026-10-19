@@ -6,11 +6,19 @@ import { mergeConfigs } from './merge';
 
 export async function loadConfigFile<T extends AnyObject>({
   configFile,
+  cwd,
   logger,
   name,
   userConfig,
 }: {
   configFile: string | undefined;
+  /**
+   * Directory to look up the config file and rc file in, and to resolve a
+   * relative `configFile` against.
+   *
+   * @default process.cwd()
+   */
+  cwd?: string;
   logger: Logger;
   name: string;
   userConfig: T;
@@ -22,6 +30,7 @@ export async function loadConfigFile<T extends AnyObject>({
   const eventC12 = logger.timeEvent('c12');
   const { config: fileConfig, configFile: loadedConfigFile } = await loadConfig<MaybeArray<T>>({
     configFile,
+    cwd,
     name,
   });
   eventC12.timeEnd();
